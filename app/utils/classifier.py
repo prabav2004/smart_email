@@ -1,49 +1,72 @@
+from typing import Dict, List
 from transformers import pipeline
+
+# Categories used for zero-shot classification
+CANDIDATE_LABELS: List[str] = [
+    "Job",
+    "Complaint",
+    "Sales",
+    "Personal"
+]
 
 
 class EmailClassifier:
     """
-    Email Classifier using Hugging Face Zero-Shot Classification pipeline.
-    Uses a lightweight distilled model for fast and efficient inference.
+    Email Classifier using Hugging Face Zero-Shot Classification.
+
+    The Hugging Face model is loaded once when the application starts
+    and reused for every incoming request.
     """
-    def __init__(self, model_name: str = "typeform/distilbert-base-uncased-mnli"):
-        self.model_name = model_name
-        self._pipeline = None
 
-    @property
-    def pipeline(self):
-        # Lazy load the pipeline so it is only initialized on first use
-        if self._pipeline is None:
-            self._pipeline = pipeline(
-                "zero-shot-classification",
-                model=self.model_name
-            )
-        return self._pipeline
+    def __init__(
+        self,
+        model_name: str = "typeform/distilbert-base-uncased-mnli"
+    ) -> None:
 
-    def classify(self, text: str) -> dict:
+        self.pipeline = pipeline(
+            task="zero-shot-classification",
+            model=model_name
+        )
+
+    def classify(self, text: str) -> Dict[str, float | str]:
         """
-        Classifies the email body into one of the candidate classes:
+        Classify an email into one of the supported categories.
+
+        Categories:
         - Job
         - Complaint
         - Sales
         - Personal
 
         Returns:
-            dict: { "category": str, "confidence": float }
-        """
-        if not text or not text.strip():
-            return {"category": "Personal", "confidence": 0.0}
-
-        candidate_labels = ["Job", "Complaint", "Sales", "Personal"]
-        
-        # Execute zero-shot pipeline
-        result = self.pipeline(text, candidate_labels)
-        
-        # The result outputs labels and scores sorted from highest to lowest confidence
-        top_category = result["labels"][0]
-        top_score = result["scores"][0]
-        
-        return {
-            "category": top_category,
-            "confidence": round(float(top_score), 4)
+        {
+            "category": str,
+            "confidence": float
         }
+        """
+
+        if not text or not text.strip():
+            return {
+                "category": "Personal",
+                "confidence": 0.0
+            }
+
+        try:
+            result = self.pipeline(
+                text,
+                candidate_labels=CANDIDATE_LABELS,
+                multi_label=False
+            )
+
+            return {
+                "category": result["labels"][0],
+                "confidence": round(float(result["scores"][0]), 4)
+            }
+
+        except Exception as e:
+            print(f"[Classifier Error] {e}")
+
+            return {
+                "category": "Personal",
+                "confidence": 0.0
+            }

@@ -1,40 +1,51 @@
 import os
-from dotenv import load_dotenv
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Load environment variables from .env using python-dotenv
-load_dotenv()
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # FastAPI Configurations
+    """
+    Application configuration loaded automatically from .env
+    """
+
+    # =====================================================
+    # FastAPI Configuration
+    # =====================================================
     PORT: int = 8000
     HOST: str = "0.0.0.0"
     DEBUG: bool = True
 
-    # OpenAI API configuration
+    # =====================================================
+    # OpenAI Configuration
+    # =====================================================
     OPENAI_API_KEY: str | None = None
 
-    # LangSmith configurations
+    # =====================================================
+    # LangSmith Configuration
+    # =====================================================
     LANGSMITH_API_KEY: str | None = None
     LANGSMITH_PROJECT: str = "smart-email-assistant"
-    LANGSMITH_TRACING: str = "false"
+    LANGCHAIN_TRACING_V2: bool = True
 
-    # Settings config
     model_config = SettingsConfigDict(
-        extra="ignore"
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
     )
 
 
-# Instantiate settings for global backend imports
+# Global settings object
 settings = Settings()
 
-# Map LangSmith settings to standard LangChain environment variables to enable tracing automatically
+
+# ---------------------------------------------------------
+# Configure LangSmith Environment Variables
+# ---------------------------------------------------------
+
 if settings.LANGSMITH_API_KEY:
     os.environ["LANGCHAIN_API_KEY"] = settings.LANGSMITH_API_KEY
-if settings.LANGSMITH_PROJECT:
-    os.environ["LANGCHAIN_PROJECT"] = settings.LANGSMITH_PROJECT
-if settings.LANGSMITH_TRACING and settings.LANGSMITH_TRACING.lower() in ("true", "1", "yes"):
+
+os.environ["LANGCHAIN_PROJECT"] = settings.LANGSMITH_PROJECT
+
+if settings.LANGCHAIN_TRACING_V2:
     os.environ["LANGCHAIN_TRACING_V2"] = "true"
-
-
