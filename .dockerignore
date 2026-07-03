@@ -1,0 +1,48 @@
+# ── Version control ────────────────────────────────────────
+.git
+.gitignore
+
+# ── Python artefacts ───────────────────────────────────────
+__pycache__
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info
+*.egg
+dist/
+build/
+.eggs/
+
+# ── Virtual environments ───────────────────────────────────
+.venv
+venv
+env
+
+# ── Environment / secrets ──────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Dev / editor files ─────────────────────────────────────
+.idea
+.vscode
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Tests & coverage ───────────────────────────────────────
+tests/
+.pytest_cache
+.coverage
+htmlcov/
+.mypy_cache
+
+# ── Docker files themselves ────────────────────────────────
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# ── Docs & misc ────────────────────────────────────────────
+README.md
+*.md

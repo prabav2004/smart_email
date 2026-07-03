@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Smart Email Assistant — classify and auto-reply to emails using LangGraph and OpenAI">
+    <title>SmartEmail.ai — AI Email Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-grid"></div>
+
+<div class="app-wrapper">
+
+    <!-- ── Header ─────────────────────────────────────────────── -->
+    <header class="header">
+        <div class="header-brand">
+            <div class="brand-dot"></div>
+            <span class="brand-name">SmartEmail<span class="brand-accent">.ai</span></span>
+        </div>
+        <div class="header-status" id="api-status">
+            <span class="status-dot" id="status-dot"></span>
+            <span class="status-text" id="status-text">Connecting…</span>
+        </div>
+    </header>
+
+    <!-- ── Hero ───────────────────────────────────────────────── -->
+    <section class="hero">
+        <h1 class="hero-title">Classify &amp; Reply <span class="hero-accent">Instantly</span></h1>
+        <p class="hero-sub">Paste any email below. Our LangGraph agent will classify it and generate a tailored professional reply.</p>
+    </section>
+
+    <!-- ── Main grid ──────────────────────────────────────────── -->
+    <main class="main-grid">
+
+        <!-- Left: Input panel -->
+        <section class="card input-card">
+            <div class="card-header">
+                <div class="card-icon">✉️</div>
+                <h2 class="card-title">Email Input</h2>
+            </div>
+
+            <form id="analyze-form" novalidate>
+                <div class="field-group">
+                    <label class="field-label" for="email-input">Paste email content</label>
+                    <textarea
+                        id="email-input"
+                        class="email-textarea"
+                        placeholder="Subject: Partnership inquiry&#10;&#10;Hi, I am reaching out to discuss a potential collaboration between our companies…"
+                        rows="14"
+                        required
+                    ></textarea>
+                    <span class="char-count" id="char-count">0 characters</span>
+                </div>
+
+                <button type="submit" class="btn-analyze" id="btn-analyze">
+                    <span class="btn-label" id="btn-label">Analyze Email</span>
+                    <div class="btn-loader" id="btn-loader" aria-hidden="true">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="btn-shine"></div>
+                </button>
+            </form>
+        </section>
+
+        <!-- Right: Results panel -->
+        <section class="card results-card" id="results-card">
+
+            <!-- Graph visualizer -->
+            <div class="card-header">
+                <div class="card-icon">🔀</div>
+                <h2 class="card-title">LangGraph Pipeline</h2>
+            </div>
+
+            <div class="pipeline" id="pipeline">
+                <div class="pipe-node" id="pipe-start">
+                    <div class="pipe-node-icon">▶</div>
+                    <span>START</span>
+                </div>
+                <div class="pipe-arrow"></div>
+                <div class="pipe-node" id="pipe-classify">
+                    <div class="pipe-node-icon">🔍</div>
+                    <span>classify_email</span>
+                </div>
+                <div class="pipe-arrow"></div>
+                <div class="pipe-node" id="pipe-reply">
+                    <div class="pipe-node-icon">✍️</div>
+                    <span id="pipe-reply-label">reply_node</span>
+                </div>
+                <div class="pipe-arrow"></div>
+                <div class="pipe-node" id="pipe-end">
+                    <div class="pipe-node-icon">⏹</div>
+                    <span>END</span>
+                </div>
+            </div>
+
+            <!-- Execution steps log -->
+            <div class="steps-section">
+                <h3 class="section-title">Execution Log</h3>
+                <ul class="steps-log" id="steps-log">
+                    <li class="step-empty">No execution yet — submit an email to begin.</li>
+                </ul>
+            </div>
+
+            <!-- Divider -->
+            <div class="divider" id="result-divider" style="display:none"></div>
+
+            <!-- Result area -->
+            <div id="result-area" style="display:none">
+
+                <!-- Category + confidence -->
+                <div class="result-meta">
+                    <div class="category-badge" id="category-badge">
+                        <span class="badge-icon" id="badge-icon">📧</span>
+                        <span class="badge-text" id="badge-text">—</span>
+                    </div>
+                    <div class="confidence-block">
+                        <span class="conf-label">Confidence</span>
+                        <div class="conf-bar-wrap">
+                            <div class="conf-bar" id="conf-bar"></div>
+                        </div>
+                        <span class="conf-value" id="conf-value">—</span>
+                    </div>
+                </div>
+
+                <!-- Generated reply -->
+                <div class="reply-block">
+                    <h3 class="section-title">Generated Reply</h3>
+                    <div class="reply-box" id="reply-box"></div>
+                    <button class="btn-copy" id="btn-copy" type="button">
+                        <span id="copy-label">Copy Reply</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Idle / empty state -->
+            <div class="empty-state" id="empty-state">
+                <div class="empty-icon">🤖</div>
+                <p>Results will appear here after analysis.</p>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        Powered by <strong>LangGraph</strong> · <strong>OpenAI</strong> · <strong>LangSmith</strong>
+    </footer>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

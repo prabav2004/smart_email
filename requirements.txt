@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+langgraph
+langchain
+langsmith
+python-dotenv
+transformers
+torch
+jinja2
+pydantic-settings
+langchain-openai
