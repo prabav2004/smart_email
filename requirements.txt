@@ -9,3 +9,4 @@ torch
 jinja2
 pydantic-settings
 langchain-openai
+packaging
