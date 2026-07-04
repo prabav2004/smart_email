@@ -5,24 +5,21 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """
-    Application configuration loaded automatically from .env
+    Application configuration loaded from environment variables.
     """
 
-    # =====================================================
-    # FastAPI Configuration
-    # =====================================================
+    # FastAPI
     PORT: int = 8000
     HOST: str = "0.0.0.0"
-    DEBUG: bool = True
+    DEBUG: bool = False
 
-    # =====================================================
-    # OpenAI Configuration
-    # =====================================================
+    # OpenAI
     OPENAI_API_KEY: str | None = None
 
-    # =====================================================
-    # LangSmith Configuration
-    # =====================================================
+    # Hugging Face
+    HF_TOKEN: str | None = None
+
+    # LangSmith
     LANGSMITH_API_KEY: str | None = None
     LANGSMITH_PROJECT: str = "smart-email-assistant"
     LANGCHAIN_TRACING_V2: bool = True
@@ -34,18 +31,15 @@ class Settings(BaseSettings):
     )
 
 
-# Global settings object
 settings = Settings()
 
 
-# ---------------------------------------------------------
-# Configure LangSmith Environment Variables
-# ---------------------------------------------------------
-
+# Configure LangSmith
 if settings.LANGSMITH_API_KEY:
     os.environ["LANGCHAIN_API_KEY"] = settings.LANGSMITH_API_KEY
 
 os.environ["LANGCHAIN_PROJECT"] = settings.LANGSMITH_PROJECT
 
-if settings.LANGCHAIN_TRACING_V2:
-    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_TRACING_V2"] = (
+    "true" if settings.LANGCHAIN_TRACING_V2 else "false"
+)
